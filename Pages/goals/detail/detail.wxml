@@ -1,0 +1,136 @@
+<!-- pages/goals/detail/detail.wxml -->
+<view class="detail-container">
+  <view class="header">
+    <view class="title">目标详情</view>
+    <view class="dropdown-menu" bindtap="showActionMenu">
+      <text class="menu-icon">•••</text>
+    </view>
+  </view>
+  
+  <!-- 操作菜单 -->
+  <view class="action-menu" wx:if="{{showMenu}}">
+    <view class="menu-item" bindtap="editGoal">
+      <text>编辑</text>
+      <text class="menu-icon">✎</text>
+    </view>
+    <view class="menu-item" bindtap="completeGoal">
+      <text>完成目标</text>
+      <text class="menu-icon">✓</text>
+    </view>
+    <view class="menu-item delete" bindtap="deleteGoal" data-delete-tasks="true">
+      <text>删除</text>
+      <text class="menu-icon">🗑</text>
+    </view>
+  </view>
+
+  <block wx:if="{{loading}}">
+    <t-loading theme="circular" size="40rpx" class="loading-center">加载中...</t-loading>
+  </block>
+  
+  <block wx:elif="{{goal}}">
+    <view class="goal-card">
+      <view class="goal-header" style="background-color: {{goal.color || '#FF6B9A'}}">
+        <view class="goal-title">{{goal.title}}</view>
+        <text wx:if="{{goal.completed}}" class="completed-tag">已完成</text>
+      </view>
+      
+      <view class="goal-info">
+        <view class="info-item">
+          <text class="info-value">{{goal.createTime ? goal.createTime.substring(0, 10) : '无'}}</text>
+        </view>
+        
+        <view class="info-item">
+          <text class="info-label">目标时间：</text>
+          <text class="info-value">{{formatDate || '无'}}</text>
+        </view>
+        
+        <view wx:if="{{goal.completed}}" class="info-item">
+          <text class="info-label">完成时间：</text>
+          <text class="info-value">{{goal.completedTime ? goal.completedTime.substring(0, 10) : '无'}}</text>
+        </view>
+      </view>
+      
+      <view wx:if="{{goal.description}}" class="goal-description">
+        <text class="description-label">描述</text>
+        <text class="description-content">{{goal.description}}</text>
+      </view>
+      
+      <!-- 任务列表区域 -->
+      <view class="tasks-section">
+        <view class="section-header">
+          <view class="section-title">目标任务</view>
+          <view class="task-stats">
+            <view class="stat-item">
+              <text class="stat-label">剩余{{remainingDays}}天</text>
+              <text class="stat-date">{{goal.endDate}} 截止</text>
+            </view>
+            <view class="stat-item">
+              <text class="stat-label">{{progressPercentage}}%</text>
+              <text class="stat-desc">目标进度</text>
+            </view>
+            <view class="stat-item">
+              <text class="stat-label">{{completedTasksCount}}</text>
+              <text class="stat-desc">已完成次数</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="tasks-list">
+          <view class="waiting-tasks">待办任务 {{tasks.length - completedTasksCount}}</view>
+          
+          <!-- AI创建任务按钮 -->
+          <view class="ai-task-btn" bindtap="createAITasks">
+            <t-button theme="primary" size="small" icon="lightning" class="ai-btn">AI创建任务</t-button>
+          </view>
+          
+          <!-- 任务列表 -->
+          <block wx:if="{{tasks.length > 0}}">
+            <view class="task-items">
+              <view 
+                wx:for="{{tasks}}" 
+                wx:key="id" 
+                class="task-item"
+                bindtap="viewTaskDetail"
+                data-id="{{item.id}}"
+              >
+                <view class="task-checkbox {{item.completed ? 'checked' : ''}}" bindtap="toggleTaskStatus" data-id="{{item.id}}">
+                  <view class="checkbox-inner"></view>
+                </view>
+                <view class="task-content">
+                  <view class="task-title">{{item.title}}</view>
+                </view>
+                <view class="task-info" wx:if="{{item.startDate || item.endDate}}">
+                    <text class="task-date">{{item.startDate || ''}}{{item.startDate && item.endDate ? ' ~ ' : ''}}{{item.endDate || ''}}</text>
+                  </view>
+                  <view class="task-desc" wx:if="{{item.description}}">{{item.description}}</view>
+                  <view class="task-quantify" wx:if="{{item.enableQuantify && item.quantifyValue}}">
+                    <text class="quantify-value">{{item.quantifyValue}}</text>
+                  </view>
+                  <view class="task-actions">
+                    <view class="edit-btn" bindtap="editTask" data-id="{{item.id}}">
+                      <t-icon name="edit" size="32rpx" color="#0052d9"></t-icon>
+                    </view>
+                    <view class="delete-btn" bindtap="deleteTask" data-id="{{item.id}}">
+                      <t-icon name="delete" size="32rpx" color="#e34d59"></t-icon>
+                    </view>
+                  </view>
+                </view>
+              </view>
+          </block>
+          
+          <!-- 空状态 -->
+          <view class="empty-tasks" wx:if="{{tasks.length === 0}}">
+            <view class="empty-box-image"></view>
+            <view class="empty-text">准备好创建任务了吗？</view>
+            <button class="create-btn" bindtap="createTask">创建任务</button>
+          </view>
+          
+          <!-- 添加任务按钮 -->
+          <view class="add-task-btn-container" wx:if="{{tasks.length > 0}}">
+            <button class="create-btn" bindtap="createTask">添加任务</button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

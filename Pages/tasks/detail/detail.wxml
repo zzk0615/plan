@@ -1,0 +1,295 @@
+<!-- Pages/tasks/detail/detail.wxml -->
+<!-- 引入子计划树状结构模板 -->
+<import src="./subtask-template.wxml" />
+<view class="detail-container">
+  <view class="header">
+    <view class="title">任务详情</view>
+    <view class="action-buttons">
+      <view class="dropdown-menu" bindtap="showActionMenu">
+        <text class="menu-icon">•••</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 操作菜单 -->
+  <view class="action-menu-popup" wx:if="{{showMenu}}">
+    <view class="menu-item" bindtap="onEditTap">
+      <text>编辑</text>
+      <text class="menu-icon">✎</text>
+    </view>
+    <view class="menu-item delete" bindtap="onDelete">
+      <text>删除</text>
+      <text class="menu-icon">🗑</text>
+    </view>
+  </view>
+
+  <block wx:if="{{loading}}">
+    <t-loading theme="circular" size="40rpx" class="loading-center">加载中...</t-loading>
+  </block>
+
+  <block wx:else>
+    
+    <t-cell-group>
+      <t-cell title="任务名称" description="{{task.title}}" bordered="{{false}}" t-class-description="cell-description"></t-cell>
+      <t-cell wx:if="{{task.description && task.description !== ''}}" title="描述" description="{{task.description}}" bordered="{{false}}" t-class-description="cell-description"></t-cell>
+      <t-cell wx:if="{{task.remark}}" title="备注" description="{{task.remark}}" bordered="{{false}}" t-class-description="cell-description"></t-cell>
+      <t-cell title="日期">
+        <view slot="description">
+          <text wx:if="{{task.dateType === 'single'}}">{{task.singleDate}}</text>
+          <text wx:if="{{task.dateType === 'range'}}">{{task.startDate}} 至 {{task.endDate}}</text>
+        </view>
+      </t-cell>
+
+      <t-cell wx:if="{{task.enableQuantify}}" title="量化数值" description="{{task.quantifyValue}}"></t-cell>
+
+      <t-cell wx:if="{{task.completed}}" title="完成时间" description="{{task.completedTime ? task.completedTime.substring(0, 10) : ''}}"></t-cell>
+
+      <t-cell wx:if="{{task.goalId}}" title="关联目标" description="{{task.goalTitle || '无'}}"></t-cell>
+    </t-cell-group>
+  </block>
+
+  <!-- 计时器功能 -->
+  <view class="timer-section" wx:if="{{!loading}}">
+    <t-cell title="专注时长" hover arrow bindtap="showTimerModal">
+      <view slot="description" class="timer-info">
+        <text wx:if="{{totalFocusTime > 0}}">已专注: {{formatFocusTime}}</text>
+        <text wx:else>点击开始计时</text>
+      </view>
+      <t-icon name="time" slot="left-icon" color="#0052d9"></t-icon>
+    </t-cell>
+  </view>
+  
+  <!-- 总体完成率显示 -->
+    <view class="overall-progress-section">
+      <view class="progress-header">
+        <text class="progress-title">总体完成率</text>
+        <text class="progress-percentage">{{totalCompletionRate}}%</text>
+      </view>
+      <view class="progress-bar-container">
+        <view class="progress-bar-bg">
+          <view class="progress-bar-fill" style="width: {{totalCompletionRate}}%"></view>
+        </view>
+      </view>
+    </view>
+    
+  <!-- 子计划功能 -->
+  <view class="subtasks-section" wx:if="{{!loading}}">
+    <view class="section-header">
+      <view class="section-title">
+        <text>子计划</text>
+        <text class="subtask-count" wx:if="{{subtasks.length > 0}}">({{completedSubtasksCount}}/{{subtasks.length}})</text>
+      </view>
+      <view class="add-subtask-btn" bindtap="showAddSubtaskModal">
+        <t-icon name="add" size="48rpx" color="#0052d9"></t-icon>
+      </view>
+    </view>
+    
+    <!-- 子计划列表 -->
+    <view class="subtasks-list" wx:if="{{subtasks.length > 0}}">
+      <view 
+        wx:for="{{subtasks}}" 
+        wx:key="id" 
+        class="subtask-item {{item.completed ? 'completed' : ''}}">
+        <view class="subtask-header">
+          <view class="subtask-content">
+            <view class="subtask-checkbox" catchtap="toggleSubtaskStatus" data-id="{{item.id}}">
+              <t-icon name="{{item.completed ? 'check-circle-filled' : 'circle'}}" size="40rpx" color="{{item.completed ? '#0052d9' : '#999'}}"></t-icon>
+            </view>
+            <view class="subtask-info" bindtap="toggleSubtaskExpand" data-id="{{item.id}}">
+              <view class="subtask-title">{{item.title}}</view>
+              <view class="subtask-progress" wx:if="{{item.subtasks && item.subtasks.length > 0}}">
+                <text class="subtask-children-count">{{item.completedSubtasksCount}}/{{item.subtasks.length}} 子计划</text>
+                <view class="progress-bar">
+                  <view class="progress-fill" style="width: {{item.completionPercentage}}%"></view>
+                </view>
+                <text class="progress-percentage">{{item.completionPercentage}}%</text>
+              </view>
+            </view>
+          </view>
+          <view class="subtask-actions">
+            <view class="subtask-action" catchtap="viewSubtaskDetail" data-id="{{item.id}}">
+              <t-icon name="browse" size="36rpx" color="#666"></t-icon>
+            </view>
+            <view class="subtask-action" catchtap="editSubtask" data-id="{{item.id}}">
+              <t-icon name="edit" size="36rpx" color="#666"></t-icon>
+            </view>
+            <view class="subtask-action" catchtap="deleteSubtask" data-id="{{item.id}}">
+              <t-icon name="delete" size="36rpx" color="#666"></t-icon>
+            </view>
+            <view class="expand-icon" catchtap="toggleSubtaskExpand" data-id="{{item.id}}" wx:if="{{item.subtasks && item.subtasks.length > 0}}">
+              <t-icon name="{{item.expanded ? 'chevron-up' : 'chevron-down'}}" size="36rpx" color="#666"></t-icon>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 嵌套子计划 - 无限层级树状结构 -->
+        <view class="nested-subtasks tree-view" wx:if="{{item.expanded && item.subtasks && item.subtasks.length > 0}}">
+          <template is="subtask-tree-item" data="{{subtasks: item.subtasks, parentId: item.id}}"></template>
+        </view>
+        <!-- 调试信息 -->
+        <view wx:if="{{item.expanded && (!item.subtasks || item.subtasks.length === 0)}}" style="font-size: 24rpx; color: #999; padding: 10rpx 0;">
+          无子计划
+        </view>
+      </view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-subtasks" wx:else>
+      <view class="empty-text">添加子计划来分解这个任务</view>
+      <t-button theme="primary" size="small" bindtap="showAddSubtaskModal" class="add-btn">添加子计划</t-button>
+    </view>
+  </view>
+</view>
+
+<!-- 计时器弹窗 -->
+<view class="timer-modal {{showTimer ? 'show' : ''}}">
+  <view class="timer-modal-content">
+    <view class="timer-header">
+      <view class="timer-tabs">
+        <view class="timer-tab {{timerType === 'normal' ? 'active' : ''}}" bindtap="switchTimerType" data-type="normal">正计时</view>
+      </view>
+      <t-icon name="close" size="48rpx" bindtap="hideTimerModal" class="close-icon"></t-icon>
+    </view>
+    
+    <view class="timer-display">
+      <view class="timer-circle {{timerRunning ? 'running' : ''}}" bindlongpress="longPressPause">
+        <view class="timer-progress"></view>
+        <view class="timer-time">{{timerDisplay}}</view>
+        <view class="timer-label">{{timerRunning ? '专注中' : '准备开始'}}</view>
+        <view class="timer-tip">长按暂停</view>
+      </view>
+    </view>
+    
+    <view class="timer-controls">
+      <t-button theme="primary" size="large" block bindtap="toggleTimer" class="timer-btn">
+        {{timerRunning ? '暂停' : '开始'}}
+      </t-button>
+      <t-button wx:if="{{timerRunning || timerSeconds > 0}}" theme="danger" size="large" block bindtap="resetTimer" class="timer-btn">重置</t-button>
+      <t-button theme="default" size="large" block bindtap="hideTimerModal" class="timer-btn return-btn">返回</t-button>
+    </view>
+  </view>
+</view>
+
+<!-- 添加/编辑子计划弹窗 - 置顶显示 -->
+<view class="subtask-modal {{showSubtaskModal ? 'show' : ''}}" style="z-index: 1500;">
+  <view class="subtask-modal-content">
+    <view class="subtask-modal-header">
+      <view class="subtask-modal-title">{{editingSubtask ? '编辑子计划' : '添加子计划'}}</view>
+      <t-icon name="close" size="48rpx" bindtap="hideSubtaskModal" class="close-icon"></t-icon>
+    </view>
+    
+    <view class="subtask-form">
+      <!-- 子计划标题输入 -->
+      <view class="form-item">
+        <view class="form-label">名称</view>
+        <view class="input-container">
+          <input 
+            class="input-field" 
+            value="{{subtaskTitle}}" 
+            placeholder="请输入子计划名称" 
+            bindinput="onSubtaskTitleInput"
+            maxlength="50"
+          />
+        </view>
+      </view>
+      
+      <!-- 子计划描述输入 -->
+      <view class="form-item">
+        <view class="form-label">描述</view>
+        <view class="input-container">
+          <textarea
+            class="input-field"
+            value="{{subtaskDescription}}"
+            placeholder="请输入描述信息"
+            bindinput="onSubtaskDescriptionInput"
+            maxlength="200"
+            style="min-height: 80rpx;"
+          />
+        </view>
+      </view>
+    </view>
+    
+    <view class="subtask-modal-footer">
+      <t-button theme="primary" size="large" block bindtap="submitSubtask" class="submit-btn">保存</t-button>
+    </view>
+  </view>
+</view>
+
+<!-- 子计划详情弹窗 -->
+<view class="subtask-detail-modal {{showSubtaskDetail ? 'show' : ''}}" style="z-index: 1400;">
+  <view class="subtask-modal-content">
+    <view class="subtask-modal-header">
+      <view class="subtask-modal-title">子计划详情</view>
+      <t-icon name="close" size="48rpx" bindtap="hideSubtaskDetailModal" class="close-icon"></t-icon>
+    </view>
+    
+    <view class="subtask-detail-content" wx:if="{{currentSubtask}}">
+      <t-cell-group>
+        <t-cell title="任务名称" description="{{currentSubtask.title}}" bordered="{{false}}" t-class-description="cell-description"></t-cell>
+        <t-cell wx:if="{{currentSubtask.description}}" title="描述" description="{{currentSubtask.description}}" bordered="{{false}}" t-class-description="cell-description"></t-cell>
+      </t-cell-group>
+      
+      <!-- 子计划的子计划列表 -->
+      <view class="nested-subtasks-section" wx:if="{{currentSubtask.subtasks && currentSubtask.subtasks.length > 0}}">
+        <view class="section-header">
+          <view class="section-title">
+            <text>子计划列表</text>
+            <text class="subtask-count">({{currentSubtask.completedSubtasksCount}}/{{currentSubtask.subtasks.length}})</text>
+          </view>
+        </view>
+        
+        <view class="nested-subtasks-list">
+          <view 
+            wx:for="{{currentSubtask.subtasks}}" 
+            wx:key="id" 
+            class="nested-subtask-item {{item.completed ? 'completed' : ''}}">
+            <view class="subtask-content">
+              <view class="subtask-checkbox" catchtap="toggleNestedSubtaskStatus" data-parent-id="{{currentSubtask.id}}" data-id="{{item.id}}">
+                <t-icon name="{{item.completed ? 'check-circle-filled' : 'circle'}}" size="36rpx" color="{{item.completed ? '#0052d9' : '#999'}}"></t-icon>
+              </view>
+              <view class="subtask-info" bindtap="toggleNestedSubtaskExpand" data-parent-id="{{currentSubtask.id}}" data-id="{{item.id}}">
+                <view class="subtask-title">{{item.title}}</view>
+                <view class="subtask-progress" wx:if="{{item.subtasks && item.subtasks.length > 0}}">
+                  <text class="subtask-children-count">{{item.completedSubtasksCount}}/{{item.subtasks.length}} 子计划</text>
+                  <view class="progress-bar nested">
+                    <view class="progress-fill" style="width: {{item.completionPercentage}}%"></view>
+                  </view>
+                  <text class="progress-percentage">{{item.completionPercentage}}%</text>
+                </view>
+              </view>
+              <view class="subtask-actions">
+                <view class="subtask-action" catchtap="viewNestedSubtask" data-parent-id="{{currentSubtask.id}}" data-id="{{item.id}}">
+                  <t-icon name="browse" size="32rpx" color="#666"></t-icon>
+                </view>
+                <view class="subtask-action" catchtap="editNestedSubtask" data-parent-id="{{currentSubtask.id}}" data-id="{{item.id}}">
+                  <t-icon name="edit" size="32rpx" color="#666"></t-icon>
+                </view>
+                <view class="subtask-action" catchtap="deleteNestedSubtask" data-parent-id="{{currentSubtask.id}}" data-id="{{item.id}}">
+                  <t-icon name="delete" size="32rpx" color="#666"></t-icon>
+                </view>
+              </view>
+              <view class="expand-icon" wx:if="{{item.subtasks && item.subtasks.length > 0}}" catchtap="toggleNestedSubtaskExpand" data-parent-id="{{currentSubtask.id}}" data-id="{{item.id}}">
+                <t-icon name="{{item.expanded ? 'chevron-up' : 'chevron-down'}}" size="32rpx" color="#666"></t-icon>
+              </view>
+            </view>
+            
+            <!-- 递归展示子计划的子计划 -->
+            <view class="nested-subtasks tree-view nested-level" wx:if="{{item.expanded && item.subtasks && item.subtasks.length > 0}}">
+              <template is="subtask-tree-item" data="{{subtasks: item.subtasks, parentId: item.id}}"></template>
+            </view>
+            <!-- 调试信息 -->
+            <view wx:if="{{item.expanded && (!item.subtasks || item.subtasks.length === 0)}}" style="font-size: 24rpx; color: #999; padding: 10rpx 0;">
+              无子计划
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <view class="subtask-detail-actions">
+        <t-button theme="primary" size="small" bindtap="addNestedSubtask" class="action-btn">添加子计划</t-button>
+        <t-button theme="default" size="small" bindtap="editCurrentSubtask" class="action-btn">编辑</t-button>
+        <t-button theme="danger" size="small" bindtap="deleteCurrentSubtask" class="action-btn">删除</t-button>
+      </view>
+    </view>
+  </view>
+</view>

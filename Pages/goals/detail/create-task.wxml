@@ -1,0 +1,114 @@
+<!-- pages/goals/detail/create-task.wxml -->
+<view class="create-task-container">
+  <view class="header">
+    <view class="title">{{isEdit ? '编辑任务' : '创建任务'}}</view>
+    <view class="more-options" wx:if="{{isView}}">
+      <t-dropdown>
+        <t-dropdown-item bindtap="editTask">编辑</t-dropdown-item>
+      </t-dropdown>
+    </view>
+  </view>
+
+  <view class="form-container">
+    <t-form>
+      <!-- 错误提示 -->
+      <view wx:if="{{formError}}" class="error-message">
+        <t-icon name="error-circle" size="36rpx" color="#e34d59"></t-icon>
+        <text>{{formError}}</text>
+      </view>
+
+      <!-- 任务名称输入 -->
+      <view class="form-item">
+        <view class="form-label">任务名称</view>
+        <view class="input-container">
+          <input
+            class="input-field"
+            value="{{title}}"
+            placeholder="请输入任务名称"
+            bindinput="onTitleInput"
+            maxlength="50"
+          />
+        </view>
+      </view>
+
+      <!-- 备注输入 -->
+      <view class="form-item">
+        <view class="form-label">备注</view>
+        <view class="input-container">
+          <textarea
+            class="input-field"
+            value="{{description}}"
+            placeholder="请输入备注信息"
+            bindinput="onDescriptionInput"
+            maxlength="200"
+            style="min-height: 80rpx;"
+          />
+        </view>
+      </view>
+
+      <!-- 日期选择类型 -->
+      <view class="form-item">
+        <view class="form-label">任务日期</view>
+        <view class="date-type-selector">
+          <view class="date-type-option {{dateType === 'single' ? 'active' : ''}}" bindtap="switchDateType" data-type="single">单日</view>
+          <view class="date-type-option {{dateType === 'range' ? 'active' : ''}}" bindtap="switchDateType" data-type="range">区间/循环</view>
+        </view>
+      </view>
+
+      <!-- 单日选择 -->
+      <view class="form-item" wx:if="{{dateType === 'single'}}">
+        <view class="form-label">选择日期</view>
+        <view class="date-picker-container">
+          <picker mode="date" value="{{singleDate}}" bindchange="onSingleDateChange">
+            <view class="picker-value">{{singleDate || '请选择日期'}}</view>
+          </picker>
+          <view class="date-picker-icon">📅</view>
+        </view>
+      </view>
+
+      <!-- 日期区间选择 -->
+      <view class="form-item" wx:if="{{dateType === 'range'}}">
+        <view class="form-label">任务日期区间</view>
+        <view class="date-picker-container">
+          <picker mode="date" value="{{startDate}}" bindchange="onStartDateChange">
+            <view class="picker-value">{{startDate || '开始日期'}}</view>
+          </picker>
+          <text class="date-separator">至</text>
+          <picker mode="date" value="{{endDate}}" bindchange="onEndDateChange">
+            <view class="picker-value">{{endDate || '结束日期'}}</view>
+          </picker>
+          <view class="date-picker-icon">📅</view>
+        </view>
+      </view>
+
+      <!-- 量化选项 -->
+      <view class="form-item">
+        <view class="form-label">任务量化</view>
+        <view class="quantify-container">
+          <switch checked="{{enableQuantify}}" bindchange="onEnableQuantifyChange" color="#0052d9"/>
+          <text class="quantify-label">{{enableQuantify ? '已开启' : '未开启'}}</text>
+        </view>
+      </view>
+
+      <!-- 量化数值输入 -->
+      <view class="form-item" wx:if="{{enableQuantify}}">
+        <view class="form-label">量化数值</view>
+        <view class="input-container">
+          <input
+            class="input-field"
+            value="{{quantifyValue}}"
+            placeholder="请输入量化数值"
+            bindinput="onQuantifyValueInput"
+            type="number"
+          />
+        </view>
+      </view>
+
+      <!-- 提交按钮 -->
+      <view class="button-group">
+        <button class="submit-btn" bindtap="submitForm">{{isEdit ? '保存' : '创建任务'}}</button>
+        <button class="delete-btn" wx:if="{{isView}}" bindtap="deleteTask">删除任务</button>
+      </view>
+    </t-form>
+  </view>
+</view>

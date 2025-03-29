@@ -1,0 +1,280 @@
+.logs-container {
+  padding: 30rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.tabs-container {
+  display: flex;
+  background-color: white;
+  border-radius: 12rpx;
+  overflow: hidden;
+  margin-bottom: 30rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: #666;
+}
+
+.tab.active {
+  background-color: #0052d9;
+  color: white;
+}
+
+.date-selector {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  border-radius: 12rpx;
+  padding: 20rpx 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.arrow {
+  font-size: 32rpx;
+  color: #0052d9;
+  padding: 10rpx;
+}
+
+.current-date {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.summary-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 20rpx;
+}
+
+.summary-icon image {
+  width: 100%;
+  height: 100%;
+}
+
+.summary-text {
+  font-size: 30rpx;
+  color: #333;
+  line-height: 1.5;
+}
+
+.stats-container {
+  margin-bottom: 30rpx;
+}
+
+.stats-card {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: white;
+  border-radius: 12rpx;
+  padding: 20rpx;
+}
+
+/* 日历视图样式 */
+.calendar-container {
+  background-color: white;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.calendar-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-weekdays {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+
+.weekday {
+  width: 14.28%;
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+  padding: 10rpx 0;
+}
+
+.calendar-days {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.calendar-day {
+  width: 14.28%;
+  height: 80rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  padding: 10rpx 0;
+}
+
+.day-number {
+  font-size: 26rpx;
+  color: #333;
+  margin-bottom: 6rpx;
+  z-index: 2;
+}
+
+.focus-indicator {
+  position: absolute;
+  bottom: 0;
+  width: 70%;
+  background-color: rgba(0, 82, 217, 0.2);
+  border-radius: 6rpx 6rpx 0 0;
+  z-index: 1;
+}
+
+.calendar-day.today {
+  background-color: rgba(0, 82, 217, 0.05);
+  border-radius: 8rpx;
+}
+
+.calendar-day.has-focus .day-number {
+  color: #0052d9;
+  font-weight: bold;
+}
+
+.calendar-day.selected {
+  background-color: rgba(0, 82, 217, 0.1);
+  border-radius: 8rpx;
+}
+
+.stats-item {
+  width: 33.33%;
+  text-align: center;
+  padding: 20rpx 0;
+}
+
+.stats-value {
+  display: block;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #0052d9;
+  margin-bottom: 10rpx;
+}
+
+.stats-label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.focus-distribution {
+  margin-bottom: 30rpx;
+}
+
+.distribution-placeholder {
+  background-color: white;
+  border-radius: 12rpx;
+  padding: 40rpx 30rpx;
+  text-align: center;
+}
+
+.upgrade-message {
+  color: #666;
+  font-size: 28rpx;
+}
+
+.upgrade-btn {
+  margin-top: 20rpx;
+  background-color: #0052d9;
+  color: white;
+  font-size: 28rpx;
+  padding: 10rpx 30rpx;
+  border-radius: 30rpx;
+  display: inline-block;
+}
+
+.focus-history {
+  margin-bottom: 30rpx;
+}
+
+.focus-record {
+  background-color: white;
+  border-radius: 12rpx;
+  padding: 20rpx 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.record-task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.task-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.task-time {
+  font-size: 28rpx;
+  color: #0052d9;
+}
+
+.record-date {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.empty-records {
+  text-align: center;
+  padding: 50rpx 0;
+  color: #999;
+  background-color: white;
+  border-radius: 12rpx;
+}

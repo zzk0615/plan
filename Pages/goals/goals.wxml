@@ -1,0 +1,85 @@
+<!-- pages/goals/goals.wxml -->
+<view class="goals-container">
+  <view class="header">
+    <view class="title">目标列表</view>
+    <t-button theme="primary" size="small" icon="add" bindtap="createGoal" class="add-btn">创建目标</t-button>
+  </view>
+
+  <block wx:if="{{loading}}">
+    <t-loading theme="circular" size="40rpx" class="loading-center">加载中...</t-loading>
+  </block>
+  
+  <block wx:elif="{{hasGoals}}">
+    <view class="goals-section">
+      <t-cell-group title="已达成目标" t-class-title="section-title">
+        <view 
+          wx:for="{{completedGoals}}" 
+          wx:key="id" 
+          class="goal-item" 
+          bindtap="viewGoalDetail" 
+          data-id="{{item.id}}"
+        >
+          <t-cell hover>
+            <view slot="title" class="goal-card" style="background-color: {{item.color || '#FF6B9A'}}20;">
+              <view class="goal-color" style="background-color: {{item.color || '#FF6B9A'}}"></view>
+              <view class="goal-content">
+                <view class="goal-title">{{item.title}}</view>
+                <view class="goal-date">{{item.endDate || '无截止日期'}}</view>
+              </view>
+              <view class="goal-status completed">
+                <t-tag theme="success" variant="light">已完成</t-tag>
+              </view>
+            </view>
+          </t-cell>
+        </view>
+      </t-cell-group>
+    </view>
+
+    <view class="goals-section">
+      <t-cell-group title="进行中目标" t-class-title="section-title">
+        <view 
+          wx:for="{{ongoingGoals}}" 
+          wx:key="id" 
+          class="goal-item" 
+          bindtap="viewGoalDetail" 
+          data-id="{{item.id}}"
+        >
+          <t-cell hover>
+            <view slot="title" class="goal-card" style="background-color: {{item.color || '#FF6B9A'}}20;">
+              <view class="goal-color" style="background-color: {{item.color || '#FF6B9A'}}"></view>
+              <view class="goal-content">
+                <view class="goal-title">{{item.title}}</view>
+                <view class="goal-date">{{item.endDate || '无截止日期'}}</view>
+                <view wx:if="{{item.description}}" class="goal-desc">{{item.description}}</view>
+              </view>
+              <view class="goal-remaining" wx:if="{{item.remainingDays !== null}}">
+                <t-tag theme="primary" variant="light">剩余 {{item.remainingDays}} 天</t-tag>
+              </view>
+            </view>
+          </t-cell>
+        </view>
+      </t-cell-group>
+    </view>
+    
+    <view class="create-btn-container">
+      <t-button theme="primary" size="large" block bindtap="createGoal" class="create-btn-with-icon">
+        <view class="icon">+</view>创建新目标
+      </t-button>
+    </view>
+  </block>
+  
+  <block wx:else>
+    <view class="empty-state">
+      <view class="empty-image">
+        <image src="/assets/icons/goal.png" mode="aspectFit"></image>
+      </view>
+      <view class="empty-text">
+        <view class="empty-title">管理你的目标</view>
+        <view class="empty-desc">将你的目标记录下来，进行拆解，持续执行并定期复盘。</view>
+      </view>
+      <view class="create-btn-container">
+        <t-button theme="primary" size="large" block bindtap="createGoal" class="create-btn">创建目标</t-button>
+      </view>
+    </view>
+  </block>
+</view>

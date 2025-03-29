@@ -1,0 +1,42 @@
+<!-- 子计划树状结构模板 - 支持无限层级递归 -->
+<template name="subtask-tree-item">
+  <view 
+    wx:for="{{subtasks}}" 
+    wx:key="id" 
+    class="subtask-item nested {{item.completed ? 'completed' : ''}}">
+    <view class="subtask-content">
+      <view class="subtask-checkbox" catchtap="toggleNestedSubtaskStatus" data-parent-id="{{parentId}}" data-id="{{item.id}}">
+        <t-icon name="{{item.completed ? 'check-circle-filled' : 'circle'}}" size="36rpx" color="{{item.completed ? '#0052d9' : '#999'}}"></t-icon>
+      </view>
+      <view class="subtask-info" bindtap="toggleNestedSubtaskExpand" data-parent-id="{{parentId}}" data-id="{{item.id}}">
+        <view class="subtask-title">{{item.title}}</view>
+        <view class="subtask-progress" wx:if="{{item.subtasks && item.subtasks.length > 0}}">
+          <text class="subtask-children-count">{{item.completedSubtasksCount}}/{{item.subtasks.length}} 子计划</text>
+          <view class="progress-bar nested">
+            <view class="progress-fill" style="width: {{item.completionPercentage}}%"></view>
+          </view>
+          <text class="progress-percentage">{{item.completionPercentage}}%</text>
+        </view>
+      </view>
+    </view>
+    <view class="subtask-actions">
+      <view class="subtask-action" catchtap="viewNestedSubtask" data-parent-id="{{parentId}}" data-id="{{item.id}}">
+        <t-icon name="browse" size="32rpx" color="#666"></t-icon>
+      </view>
+      <view class="subtask-action" catchtap="editNestedSubtask" data-parent-id="{{parentId}}" data-id="{{item.id}}">
+        <t-icon name="edit" size="32rpx" color="#666"></t-icon>
+      </view>
+      <view class="subtask-action" catchtap="deleteNestedSubtask" data-parent-id="{{parentId}}" data-id="{{item.id}}">
+        <t-icon name="delete" size="32rpx" color="#666"></t-icon>
+      </view>
+      <view class="expand-icon" wx:if="{{item.subtasks && item.subtasks.length > 0}}" catchtap="toggleNestedSubtaskExpand" data-parent-id="{{parentId}}" data-id="{{item.id}}">
+        <t-icon name="{{item.expanded ? 'chevron-up' : 'chevron-down'}}" size="32rpx" color="#666"></t-icon>
+      </view>
+    </view>
+    
+    <!-- 递归展示子计划的子计划 -->
+    <view class="nested-subtasks tree-view nested-level" wx:if="{{item.expanded && item.subtasks && item.subtasks.length > 0}}">
+      <template is="subtask-tree-item" data="{{subtasks: item.subtasks, parentId: item.id}}"></template>
+    </view>
+  </view>
+</template>

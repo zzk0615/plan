@@ -1,0 +1,41 @@
+{
+  "pages": [
+    "Pages/goals/goals",
+    "Pages/index/index",
+    "Pages/logs/logs",
+    "Pages/goals/create/create",
+    "Pages/goals/detail/detail",
+    "Pages/goals/detail/create-task",
+    "Pages/settings/settings",
+    "Pages/tasks/detail/detail"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "目标管理",
+    "navigationBarBackgroundColor": "#f6f7fb"
+  },
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {},
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#000000",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "Pages/goals/goals",
+        "text": "目标",
+        "iconPath": "assets/icons/goal_selected.png",
+        "selectedIconPath": "assets/icons/goal_selected.png"
+      },
+      {
+        "pagePath": "Pages/logs/logs",
+        "text": "分析",
+        "iconPath": "assets/icons/analysis_selected.png",
+        "selectedIconPath": "assets/icons/analysis_selected.png"
+      }
+    ]
+  }
+}

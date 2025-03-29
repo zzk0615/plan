@@ -1,0 +1,34 @@
+<!--pages/logs/logs.wxml-->
+<view class="logs-container">
+  <view class="header">
+    <view class="title">专注分析</view>
+  </view>
+
+  <view class="date-selector">
+    <view class="current-date">{{currentDateDisplay}}</view>
+  </view>
+
+  <view class="summary-card">
+    <view class="summary-icon">
+      <image src="/assets/icons/analysis.png" mode="aspectFit"></image>
+    </view>
+    <view class="summary-text">
+      <text>{{summaryText}}</text>
+    </view>
+  </view>
+
+
+  <view class="focus-history">
+    <view class="section-title">专注记录</view>
+    <block wx:if="{{focusRecords.length > 0}}">
+      <view class="focus-record" wx:for="{{focusRecords}}" wx:key="id" bindtap="viewTaskDetail" data-id="{{item.id}}">
+        <view class="record-task">
+          <view class="task-name">{{item.taskTitle}}</view>
+          <view class="task-time">{{item.focusTime}}</view>
+        </view>
+        <view class="record-date">{{item.date}}</view>
+      </view>
+    </block>
+  </view>
+
+</view>
